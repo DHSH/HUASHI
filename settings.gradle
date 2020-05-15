@@ -1,0 +1,3 @@
+rootProject.name='HUASHI'
+include ':app'
+include ':huashi'
