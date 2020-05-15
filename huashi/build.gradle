@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 //aar打包
 //apply from: 'maven-release-aar.gradle'
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.denghs'
+group='com.github.DHSH'
 
 android {
     compileSdkVersion 29
@@ -12,7 +12,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.1"
+        versionName "0.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
