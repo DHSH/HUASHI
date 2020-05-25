@@ -47,7 +47,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
     api project(':huashi')
+//    implementation 'com.github.DHSH:HUASHI:V0.0.3'
 //    引用 maven，这里可以指定版本
 //    implementation 'me.denghs:arr:0.0.1'
 }
