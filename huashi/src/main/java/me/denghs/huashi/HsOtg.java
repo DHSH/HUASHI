@@ -52,17 +52,23 @@ public class HsOtg {
 
     public HsOtg(Context instance) {
         context = instance;
-        File panorama = new File(instance.getString(R.string.cardId_panorama));
-        if (!panorama.exists()) {
-            panorama.mkdirs();
+        String path = instance.getString(R.string.cardId_panorama);
+        if (!"".equals(path)){
+            File panorama = new File(path);
+            if (!panorama.exists()) {
+                panorama.mkdirs();
+            }
         }
-        panoramapath = panorama.getAbsolutePath();
+        panoramapath = path;
+        path = instance.getString(R.string.cardId_portrait);
+        if (!"".equals(path)){
+            File portrait = new File(path);
+            if (!portrait.exists()) {
+                portrait.mkdirs();
+            }
+        }
+        portraitpath = path;
 
-        File portrait = new File(instance.getString(R.string.cardId_portrait));
-        if (!portrait.exists()) {
-            portrait.mkdirs();
-        }
-        portraitpath = portrait.getAbsolutePath();
 
 
 //        filepath = Environment.getExternalStorageDirectory().getAbsolutePath()
@@ -191,10 +197,12 @@ public class HsOtg {
                                 if (ret == 1) {// 解码失败
                                     bitmap = BitmapFactory.decodeByteArray(bmpBuf, 0,
                                             bmpBuf.length);
-                                    try {
-                                        panorama = GetImg.ShowBmp(ici, context, 1, panoramapath, bitmap);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                    if (!TextUtils.isEmpty(panoramapath)) {
+                                        try {
+                                            panorama = GetImg.ShowBmp(ici, context, 1, panoramapath, bitmap);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                 }
 
@@ -229,6 +237,12 @@ public class HsOtg {
          */
         void connect_success(String samid);
 
+        /**
+         *
+         * @param Info
+         * @param portraitBmp 身份证头像
+         * @param panoramaBmp 身份证正反照
+         */
         void read_success(HSIDCardInfo Info, Bitmap portraitBmp, Bitmap panoramaBmp);
 
     }

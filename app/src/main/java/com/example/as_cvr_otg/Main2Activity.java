@@ -63,7 +63,7 @@ public class Main2Activity extends Activity {
 
                     @Override
                     public void read_success(HSIDCardInfo ic, Bitmap portraitBmp, Bitmap panoramaBmp) {
-                        iv_photo.setImageBitmap(portraitBmp);
+                        iv_photo.setImageBitmap(panoramaBmp);
 
                         tv_info.setText("证件类型：身份证\n" + "姓名：" + ic.getPeopleName()
                                 + "\n" + "性别：" + ic.getSex() + "\n" + "民族："
