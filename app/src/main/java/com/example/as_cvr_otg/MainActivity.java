@@ -18,12 +18,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.huashi.otg.sdk.GetImg;
 import com.huashi.otg.sdk.HSIDCardInfo;
 import com.huashi.otg.sdk.HandlerMsg;
 import com.huashi.otg.sdk.HsOtgApi;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -142,17 +144,17 @@ public class MainActivity extends Activity {
 
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bmpBuf, 0,
                             bmpBuf.length);
-                    iv_photo.setImageBitmap(bitmap); // 显示头像
+//                    iv_photo.setImageBitmap(bitmap); // 显示头像
 
                     //////////////////////////////////////////////////////////////////////////////////////
                     // 生成证件正反面，需要给filepath授权写权限
-                   /* try {
+                    try {
                         GetImg.ShowBmp(ic, MainActivity.this, 1, filepath,bitmap);
-                        //iv_photo.setImageBitmap(GetImg.ShowBmp(ic, MainActivity.this, 1, filepath,bitmap)); // 显示正反面
+                        iv_photo.setImageBitmap(GetImg.ShowBmp(ic, MainActivity.this, 1, filepath,bitmap)); // 显示正反面
                     } catch (IOException e) {
                         // TODO 自动生成的 catch 块
                         e.printStackTrace();
-                    }*/
+                    }
                     //////////////////////////////////////////////////////////////////////////////////////
                     if (!m_Auto) {
                         startTime = System.currentTimeMillis() - startTime;
