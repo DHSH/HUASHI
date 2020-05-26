@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!--    身份证头像路径，不填或没有android.permission.WRITE_EXTERNAL_STORAGE权限则在内存中生成-->
+
     <string name="cardId_portrait">/mnt/sdcard/denghs/cardId</string>
 <!--    身份证正反面路径，需要动态申请android.permission.WRITE_EXTERNAL_STORAGE权限，不填则不保存到本地-->
+
     <string name="cardId_panorama">/mnt/sdcard/denghs/cardId</string>
 </resources>
