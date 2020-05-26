@@ -3,6 +3,7 @@ package com.example.as_cvr_otg;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class Main2Activity extends Activity {
         conn = (Button) findViewById(R.id.conn);
         m_close = (Button) findViewById(R.id.close);
 
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE} ,1);
     }
 
     private void setEnven() {

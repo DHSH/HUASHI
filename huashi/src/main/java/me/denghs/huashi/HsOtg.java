@@ -199,9 +199,13 @@ public class HsOtg {
                                 // String bmpPath = filepath + "/zp.bmp"; // 照片头像保存路径
                                 boolean isWrite = context.checkCallingOrSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
                                 int ret = 0;
-                                if (isWrite) {
-                                    ret = api.unpack(ici.getwltdata(), bmpBuf, TextUtils.isEmpty(portraitpath) ? ""
-                                            : portraitpath.concat("/").concat(ici.getIDCard().concat(".bmp")));
+                                if (isWrite && !TextUtils.isEmpty(portraitpath)) {
+                                    File file = new File(portraitpath.concat("/").concat(ici.getIDCard()));
+                                    if (!file.exists()){
+                                        file.mkdir();
+                                    }
+                                    file = new File(file, ici.getIDCard().concat(".bmp"));
+                                    ret = api.unpack(ici.getwltdata(), bmpBuf, file.getAbsolutePath());
                                 } else {
                                     ret = api.unpack(ici.getwltdata(), bmpBuf, "");
                                 }
@@ -212,7 +216,11 @@ public class HsOtg {
                                             bmpBuf.length);
                                     if (isWrite && !TextUtils.isEmpty(panoramapath)) {
                                         try {
-                                            panoramaBmp = GetImg.ShowBmp(ici, context, 1, panoramapath, portraitBmp);
+                                            File file = new File(panoramapath.concat("/").concat(ici.getIDCard()));
+                                            if (!file.exists()){
+                                                file.mkdir();
+                                            }
+                                            panoramaBmp = GetImg.ShowBmp(ici, context, 1, file.getAbsolutePath(), portraitBmp);
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
