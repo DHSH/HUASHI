@@ -1,7 +1,9 @@
 package me.denghs.huashi;
 
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -10,6 +12,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.huashi.otg.sdk.GetImg;
 import com.huashi.otg.sdk.HSIDCardInfo;
@@ -34,14 +37,11 @@ public class HsOtg {
 
     Handler h = new Handler(Looper.getMainLooper()) {
         public void handleMessage(android.os.Message msg) {
-            if (msg.what == 99 || msg.what == 100) {
-//                statu.setText((String) msg.obj);
-//                m_Con = false;
-            }
             // 第一次授权时候的判断是利用handler判断，授权过后就不用这个判断了
             if (msg.what == HandlerMsg.CONNECT_SUCCESS) {
-                System.out.println("CONNECT_SUCCESS");
                 start();
+            } else if (msg.what == HandlerMsg.CONNECT_ERROR) {
+                Toast.makeText(context, "连接身份证读卡器失败", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -69,6 +69,9 @@ public class HsOtg {
         }
         portraitpath = path;
 
+//        if (!TextUtils.isEmpty(portraitpath)|| !TextUtils.isEmpty(panoramapath)){
+//        }
+
 
 
 //        filepath = Environment.getExternalStorageDirectory().getAbsolutePath()
@@ -86,10 +89,9 @@ public class HsOtg {
      */
     public void init(CallBack callBack) {
         int init = api.init();
+        this.callBack = callBack;
         if (init == 1) {
-            this.callBack = callBack;
             start();
-            callBack.connect_success(api.GetSAMID());
         }
     }
 
@@ -112,10 +114,12 @@ public class HsOtg {
             m_Auto = false;
 //            SystemClock.sleep(1500);
         }
-        thread.interrupt();
+        if (thread != null) {
+            thread.interrupt();
+        }
         if (api != null) {
             api.unInit();
-//            api = null;
+            api = null;
         }
         m_Con = false;
         h.removeCallbacksAndMessages(null);
@@ -189,25 +193,34 @@ public class HsOtg {
                         if (api.ReadCard(ici, 200, 1300) == 1) {
                             if (!ici.getIDCard().equals(idCard)) {
                                 idCard = ici.getIDCard();
+
+
                                 byte[] bmpBuf = new byte[102 * 126 * 3 + 54 + 126 * 2]; // 照片头像bmp数据
                                 // String bmpPath = filepath + "/zp.bmp"; // 照片头像保存路径
-                                int ret = api.unpack(ici.getwltdata(), bmpBuf, portraitpath);
-                                Bitmap bitmap = null;
-                                Bitmap panorama = null;
-                                if (ret == 1) {// 解码失败
-                                    bitmap = BitmapFactory.decodeByteArray(bmpBuf, 0,
+                                boolean isWrite = context.checkCallingOrSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                                int ret = 0;
+                                if (isWrite) {
+                                    ret = api.unpack(ici.getwltdata(), bmpBuf, TextUtils.isEmpty(portraitpath) ? ""
+                                            : portraitpath.concat("/").concat(ici.getIDCard().concat(".bmp")));
+                                } else {
+                                    ret = api.unpack(ici.getwltdata(), bmpBuf, "");
+                                }
+                                Bitmap portraitBmp = null;
+                                Bitmap panoramaBmp = null;
+                                if (ret == 1) {// 解码成功
+                                    portraitBmp = BitmapFactory.decodeByteArray(bmpBuf, 0,
                                             bmpBuf.length);
-                                    if (!TextUtils.isEmpty(panoramapath)) {
+                                    if (isWrite && !TextUtils.isEmpty(panoramapath)) {
                                         try {
-                                            panorama = GetImg.ShowBmp(ici, context, 1, panoramapath, bitmap);
+                                            panoramaBmp = GetImg.ShowBmp(ici, context, 1, panoramapath, portraitBmp);
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
                                     }
                                 }
 
-                                final Bitmap finalBitmap = bitmap;
-                                final Bitmap finalPanorama = panorama;
+                                final Bitmap finalBitmap = portraitBmp;
+                                final Bitmap finalPanorama = panoramaBmp;
                                 final HSIDCardInfo finalici = ici;
                                 h.post(new Runnable() {
                                     @Override
@@ -233,13 +246,13 @@ public class HsOtg {
         /**
          * 连接成功
          *
-         * @param samid 设备Id
+         * @param samid 模块号
          */
         void connect_success(String samid);
 
         /**
-         *
-         * @param Info
+         * 读取成功返回值
+         * @param Info 基本信息
          * @param portraitBmp 身份证头像
          * @param panoramaBmp 身份证正反照
          */

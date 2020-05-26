@@ -1,6 +1,7 @@
 package com.example.as_cvr_otg;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -63,7 +64,7 @@ public class Main2Activity extends Activity {
 
                     @Override
                     public void read_success(HSIDCardInfo ic, Bitmap portraitBmp, Bitmap panoramaBmp) {
-                        iv_photo.setImageBitmap(panoramaBmp);
+                        iv_photo.setImageBitmap(portraitBmp);
 
                         tv_info.setText("证件类型：身份证\n" + "姓名：" + ic.getPeopleName()
                                 + "\n" + "性别：" + ic.getSex() + "\n" + "民族："
